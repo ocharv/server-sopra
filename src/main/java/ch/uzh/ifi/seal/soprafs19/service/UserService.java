@@ -34,33 +34,52 @@ public class UserService {
     public User getUserById(Long id) {
         return this.userRepository.getById(id);
     }
+    //a new user is created
     public User createUser(User newUser) {
         newUser.setToken(UUID.randomUUID().toString());
         SimpleDateFormat day = new SimpleDateFormat("dd/MM/yyyy");
         String date = day.format(new Date());
         newUser.setCreationDate(date);
-        newUser.setStatus(UserStatus.ONLINE);
+        newUser.setStatus(UserStatus.OFFLINE);
         userRepository.save(newUser);
         log.debug("Created Information for User: {}", newUser);
         return newUser;
     }
-    public User updateUser(User user) {
+    //the users personal details are updated
+    public void updateUser(User user) {
         Long id = user.getId();
         User updatedUser = this.userRepository.getById(id);
         updatedUser.setDateOfBirth(user.getDateOfBirth());
         updatedUser.setUsername(user.getUsername());
         updatedUser.setName(user.getName());
         userRepository.save(updatedUser);
-        return updatedUser;
+        //return updatedUser;
     }
+    //during login the user's credentials are verified.
+    //if the verification is successful the user is granted access to the rest of the website
     public User authenticateUser(User user){
         String username = user.getUsername();
         String password = user.getPassword();
         User authUser= this.userRepository.findByUsername(username);
         if (username.equals(authUser.getUsername()) && password.equals(authUser.getPassword())){
+            authUser.setStatus(UserStatus.ONLINE);
             return authUser;
         }else{
             return null;
+        }
+    }
+    //when the user logs out the status is reset back to OFFLINE
+    public void resetStatus(String token){
+        User user = this.userRepository.findByToken(token);
+        user.setStatus(UserStatus.OFFLINE);
+    }
+    //makes sure that the user is authenticated.
+    //if so the user is allowed to access restricted pages
+    public Boolean isAuthenticated(String token){
+        if (this.userRepository.findByToken(token) == null){
+            return false;
+        }else {
+            return true;
         }
     }
 }
