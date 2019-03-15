@@ -68,7 +68,7 @@ public class UserController {
     }
     //updates the profile details of the user with the specified id
     @PutMapping("/users/{id}")
-    @CrossOrigin(origins = "http://localhost:3000")
+    //@CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<String> updateUser(@PathVariable Long id,@RequestHeader(value="Token") String token,@RequestBody User updatedUser){
         User user = this.service.getUserById(id);
         if(token.equals(user.getToken())){
@@ -87,7 +87,7 @@ public class UserController {
     }
     // the opposite of login
     @PutMapping("/logout")
-    @CrossOrigin(origins = "http://localhost:3000")
+    //@CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<String> resetStatus(@RequestBody String  token){
         try {
             this.service.resetStatus(token);

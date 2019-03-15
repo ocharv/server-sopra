@@ -27,14 +27,15 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    // retrieves all the registered users
     public Iterable<User> getUsers() {
         return this.userRepository.findAll();
     }
-
+    //finds user info for a user with the specified id
     public User getUserById(Long id) {
         return this.userRepository.getById(id);
     }
-    //a new user is created
+    //creates/registers users
     public User createUser(User newUser) {
         newUser.setToken(UUID.randomUUID().toString());
         SimpleDateFormat day = new SimpleDateFormat("dd/MM/yyyy");
@@ -53,10 +54,9 @@ public class UserService {
         updatedUser.setUsername(user.getUsername());
         updatedUser.setName(user.getName());
         userRepository.save(updatedUser);
-        //return updatedUser;
     }
     //during login the user's credentials are verified.
-    //if the verification is successful the user is granted access to the rest of the website
+    //if the verification is successful the user is logged in
     public User authenticateUser(User user){
         String username = user.getUsername();
         String password = user.getPassword();
@@ -74,7 +74,7 @@ public class UserService {
         user.setStatus(UserStatus.OFFLINE);
     }
     //makes sure that the user is authenticated.
-    //if so the user is allowed to access restricted pages
+    //if so the user is allowed to access "restricted" pages
     public Boolean isAuthenticated(String token){
         if (this.userRepository.findByToken(token) == null){
             return false;
